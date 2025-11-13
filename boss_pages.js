@@ -173,13 +173,12 @@ function setupBossDetail(root) {
         return;
       }
 
+      // このボス戦の行だけ集める
       const units = [];
-      let place = "";
       for (let i = 1; i < rows.length; i++) {
         const cols = rows[i];
         if (!cols[idxBoss] || cols[idxBoss] !== bossName) continue;
-
-        const unit = {
+        units.push({
           unit: idxUnit >= 0 ? (cols[idxUnit] || "") : "",
           count: idxCount >= 0 ? (cols[idxCount] || "") : "",
           hp: idxHP >= 0 ? (cols[idxHP] || "") : "",
@@ -189,9 +188,7 @@ function setupBossDetail(root) {
           note: idxNote >= 0 ? (cols[idxNote] || "") : "",
           pattern: idxPattern >= 0 ? (cols[idxPattern] || "") : "",
           src: idxSrc >= 0 ? (cols[idxSrc] || "") : "",
-        };
-        if (!place && unit.place) place = unit.place;
-        units.push(unit);
+        });
       }
 
       if (!units.length) {
@@ -199,63 +196,105 @@ function setupBossDetail(root) {
         return;
       }
 
-      // 表示レイアウト：ブロック表示
+      // メイン（ボス本体）とサブを分ける
+      let mainUnit = units.find((u) => u.unit === bossName);
+      if (!mainUnit) {
+        mainUnit = units[0];
+      }
+      const subUnits = units.filter((u) => u !== mainUnit);
+
       root.innerHTML = "";
 
+      // 見出し
       const h2 = document.createElement("h2");
       h2.textContent = bossName;
       root.appendChild(h2);
 
+      // 出現場所（最初に見つかったもの）
+      const place = mainUnit.place || (units.find((u) => u.place)?.place || "");
       if (place) {
         const pPlace = document.createElement("p");
         pPlace.textContent = "出現場所：" + place;
         root.appendChild(pPlace);
       }
 
-      units.forEach((u) => {
-        const section = document.createElement("section");
-        section.className = "boss-unit-block";
+      // ===== ボス本体のまとめ表示 =====
+      const mainSection = document.createElement("section");
+      mainSection.className = "boss-main-block";
 
-        const h3 = document.createElement("h3");
-        const unitTitle = u.unit || bossName;
-        const countLabel = u.count ? `（${u.count}体）` : "";
-        h3.textContent = unitTitle + countLabel;
-        section.appendChild(h3);
+      const h3 = document.createElement("h3");
+      const countLabel = mainUnit.count ? `（${mainUnit.count}体）` : "";
+      h3.textContent = (mainUnit.unit || bossName) + countLabel;
+      mainSection.appendChild(h3);
 
-        const pStatus = document.createElement("p");
-        const statusParts = [];
-        if (u.hp) statusParts.push("HP：" + u.hp);
-        if (u.exp) statusParts.push("経験値：" + u.exp);
-        if (u.gold) statusParts.push("ゴールド：" + u.gold);
-        pStatus.textContent = statusParts.join(" / ");
-        section.appendChild(pStatus);
+      const pStatus = document.createElement("p");
+      const statusParts = [];
+      if (mainUnit.hp) statusParts.push("HP：" + mainUnit.hp);
+      if (mainUnit.exp) statusParts.push("経験値：" + mainUnit.exp);
+      if (mainUnit.gold) statusParts.push("ゴールド：" + mainUnit.gold);
+      pStatus.textContent = statusParts.join(" / ");
+      mainSection.appendChild(pStatus);
 
-        if (u.note) {
-          const pNote = document.createElement("p");
-          pNote.textContent = "特徴・メモ：" + u.note;
-          section.appendChild(pNote);
-        }
+      if (mainUnit.note) {
+        const pNote = document.createElement("p");
+        pNote.textContent = "特徴・メモ：" + mainUnit.note;
+        mainSection.appendChild(pNote);
+      }
 
-        if (u.pattern) {
-          const pPattern = document.createElement("p");
-          pPattern.textContent = "行動パターン：" + u.pattern;
-          section.appendChild(pPattern);
-        }
+      if (mainUnit.pattern) {
+        const pPattern = document.createElement("p");
+        pPattern.textContent = "行動パターン：" + mainUnit.pattern;
+        mainSection.appendChild(pPattern);
+      }
 
-        if (u.src) {
-          const pSrc = document.createElement("p");
-          pSrc.textContent = "参考元：" + u.src;
-          section.appendChild(pSrc);
-        }
+      if (mainUnit.src) {
+        const pSrc = document.createElement("p");
+        pSrc.textContent = "参考元：" + mainUnit.src;
+        mainSection.appendChild(pSrc);
+      }
 
-        root.appendChild(section);
-      });
+      root.appendChild(mainSection);
+
+      // ===== 子分などサブ個体の一覧（いる場合だけ） =====
+      if (subUnits.length) {
+        const h3subs = document.createElement("h3");
+        h3subs.textContent = "編成・同行モンスター";
+        root.appendChild(h3subs);
+
+        const table = document.createElement("table");
+        table.className = "boss-sub-table";
+
+        const thead = document.createElement("thead");
+        const trh = document.createElement("tr");
+        ["個体名", "体数", "HP", "経験値", "ゴールド", "行動パターン", "メモ"].forEach((label) => {
+          const th = document.createElement("th");
+          th.textContent = label;
+          trh.appendChild(th);
+        });
+        thead.appendChild(trh);
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+        subUnits.forEach((u) => {
+          const tr = document.createElement("tr");
+          const cols = [u.unit, u.count, u.hp, u.exp, u.gold, u.pattern, u.note];
+          cols.forEach((val) => {
+            const td = document.createElement("td");
+            td.textContent = val || "";
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        root.appendChild(table);
+      }
     })
     .catch((err) => {
       console.error(err);
       root.textContent = "読み込み中にエラーが発生しました。";
     });
 }
+
 
 // simple CSV parser（外部ライブラリは使わない）
 function parseCSV(text) {
