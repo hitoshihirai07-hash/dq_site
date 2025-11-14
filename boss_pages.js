@@ -19,22 +19,43 @@ document.addEventListener("DOMContentLoaded", () => {
     table.boss-index-table th {
       background: #f5f5f5;
     }
-    .boss-unit-block {
+    .boss-main-block {
       border: 1px solid #e0e0e0;
       border-radius: 4px;
-      padding: 8px 10px;
-      margin: 8px 0;
+      padding: 10px 12px;
+      margin: 8px 0 12px;
       font-size: 13px;
+      background: #ffffff;
     }
-    .boss-unit-block:hover {
-      background: #fafafa;
+    .boss-main-block h3 {
+      margin: 0 0 6px;
+      font-size: 15px;
     }
-    .boss-unit-block h3 {
-      margin: 0 0 4px;
-      font-size: 14px;
+    .boss-main-block p {
+      margin: 3px 0;
     }
-    .boss-unit-block p {
-      margin: 2px 0;
+    table.boss-sub-table {
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 900px;
+      margin-top: 8px;
+      background: #ffffff;
+    }
+    table.boss-sub-table th,
+    table.boss-sub-table td {
+      border: 1px solid #666;
+      padding: 4px 6px;
+      font-size: 12px;
+    }
+    table.boss-sub-table th {
+      background: #f0f0f0;
+      text-align: center;
+    }
+    table.boss-sub-table td:nth-child(2),
+    table.boss-sub-table td:nth-child(3),
+    table.boss-sub-table td:nth-child(4),
+    table.boss-sub-table td:nth-child(5) {
+      text-align: right;
     }
   `;
   document.head && document.head.appendChild(style);
@@ -133,6 +154,23 @@ function setupBossList(root) {
     .catch((err) => console.error(err));
 }
 
+// 行動パターンの文字列を「①〜⑧」で自動改行
+function formatPattern(raw) {
+  if (!raw) return "";
+
+  // まずHTMLエスケープ
+  let s = raw
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // ②〜⑧ の前で改行を入れる（①は先頭に来る想定なので改行しない）
+  // 例: 「①こうげき②いてつくはどう③ランダム…」 → ①こうげき<br>②いてつくはどう<br>③ランダム…
+  s = s.replace(/(?!^)([②③④⑤⑥⑦⑧])/g, "<br>$1");
+
+  return s;
+}
+
 function setupBossDetail(root) {
   const csvFile = root.getAttribute("data-csv");
   if (!csvFile) return;
@@ -173,7 +211,6 @@ function setupBossDetail(root) {
         return;
       }
 
-      // このボス戦の行だけ集める
       const units = [];
       for (let i = 1; i < rows.length; i++) {
         const cols = rows[i];
@@ -243,7 +280,7 @@ function setupBossDetail(root) {
 
       if (mainUnit.pattern) {
         const pPattern = document.createElement("p");
-        pPattern.textContent = "行動パターン：" + mainUnit.pattern;
+        pPattern.innerHTML = "行動パターン：" + formatPattern(mainUnit.pattern);
         mainSection.appendChild(pPattern);
       }
 
@@ -277,10 +314,23 @@ function setupBossDetail(root) {
         const tbody = document.createElement("tbody");
         subUnits.forEach((u) => {
           const tr = document.createElement("tr");
-          const cols = [u.unit, u.count, u.hp, u.exp, u.gold, u.pattern, u.note];
-          cols.forEach((val) => {
+          const formattedPattern = u.pattern ? formatPattern(u.pattern) : "";
+          const cols = [
+            u.unit,
+            u.count,
+            u.hp,
+            u.exp,
+            u.gold,
+            formattedPattern,
+            u.note || "",
+          ];
+          cols.forEach((val, index) => {
             const td = document.createElement("td");
-            td.textContent = val || "";
+            if (index === 5 && typeof val === "string" && val.includes("<br>")) {
+              td.innerHTML = val; // 行動パターン列だけ <br> を解釈
+            } else {
+              td.textContent = val || "";
+            }
             tr.appendChild(td);
           });
           tbody.appendChild(tr);
@@ -294,7 +344,6 @@ function setupBossDetail(root) {
       root.textContent = "読み込み中にエラーが発生しました。";
     });
 }
-
 
 // simple CSV parser（外部ライブラリは使わない）
 function parseCSV(text) {
