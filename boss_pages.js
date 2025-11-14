@@ -154,19 +154,19 @@ function setupBossList(root) {
     .catch((err) => console.error(err));
 }
 
-// 行動パターンの文字列を「①〜⑧」で自動改行
+// 行動パターンの文字列を「①〜⑳」で自動改行
 function formatPattern(raw) {
   if (!raw) return "";
 
-  // まずHTMLエスケープ
+  // HTMLエスケープ
   let s = raw
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 
-  // ②〜⑧ の前で改行を入れる（①は先頭に来る想定なので改行しない）
-  // 例: 「①こうげき②いてつくはどう③ランダム…」 → ①こうげき<br>②いてつくはどう<br>③ランダム…
-  s = s.replace(/(?!^)([②③④⑤⑥⑦⑧])/g, "<br>$1");
+  // ②〜⑳ の前で改行を入れる（①は先頭に来る想定なので改行しない）
+  // ①こうげき②…③… → ①こうげき<br>②…<br>③…
+  s = s.replace(/(?!^)([②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳])/g, "<br>$1");
 
   return s;
 }
