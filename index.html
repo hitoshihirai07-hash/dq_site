@@ -43,7 +43,6 @@
     <h2>その他</h2>
     <ul>
       <li>メモ・小ネタ（予定）</li>
-      <li><a href="worldmap.html">世界マップ</a></li>
       <li><a href="about.html">このサイトについて</a></li>
     </ul>
 
@@ -100,11 +99,25 @@
           <div class="helpers-title">補助・取り巻き（計算には含まれません）</div>
           <ul class="helpers-list" data-role="helpers-list"></ul>
         </div>
+      
+      </section>
+
+      <section class="site-search-tool">
+        <h2>サイト内検索</h2>
+
+        <div class="field">
+          <label for="site-search-input">キーワード：</label>
+          <input id="site-search-input" type="search" data-role="site-search-input"
+                 placeholder="例：ベホマ、りゅうおう、やくそう">
+        </div>
+
+        <div class="search-results" data-role="site-search-results"></div>
       </section>
     </aside>
 
   </main>
   <script src="boss_hp_sidebar.js"></script>
+  <script src="site_search.js"></script>
 </body>
 </html>
 
