@@ -2,67 +2,17 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>DQ2 キラキラ・ひみつの場所 一覧</title>
+  <title>DQ2 キラキラの場所一覧</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="kira.css">
 </head>
 <body>
-  <h1>ドラゴンクエストII キラキラ・ひみつの場所 一覧</h1>
-  <p><a href="index.html">&larr; トップに戻る</a>（必要に応じてリンク先を調整してください）</p>
+  <h1>ドラゴンクエストII キラキラの場所一覧</h1>
+  <p><a href="index.html">&larr; トップページに戻る</a></p>
+  <p>ドラゴンクエストIIのフィールドや海辺・深海などにあるキラキラから入手できるアイテムの一覧です。番号や場所を見ながら中身を確認できます。</p>
 
-    <div class="filter-bar">
-      <label>
-        キーワード検索：
-        <input type="text" id="dq2-kira-blue-search" placeholder="入手物などで検索">
-      </label>
-    </div>
-    <table id="dq2-kira-blue-table">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
-  </div>
+  <table data-csv="dq2_kirakira.csv"></table>
 
-  <div class="section">
-    <h2>キラキラの場所（赤い番号）</h2>
-    <div class="filter-bar">
-      <label>
-        キーワード検索：
-        <input type="text" id="dq2-kira-red-search" placeholder="入手物などで検索">
-      </label>
-    </div>
-    <table id="dq2-kira-red-table">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <div class="section">
-    <h2>ひみつの場所（青い番号）</h2>
-    <div class="filter-bar">
-      <label>
-        キーワード検索：
-        <input type="text" id="dq2-secret-blue-search" placeholder="番号・入手物・場所などで検索">
-      </label>
-    </div>
-    <table id="dq2-secret-blue-table">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <div class="section">
-    <h2>ひみつの場所（赤い番号）</h2>
-    <div class="filter-bar">
-      <label>
-        キーワード検索：
-        <input type="text" id="dq2-secret-red-search" placeholder="番号・入手物・場所などで検索">
-      </label>
-    </div>
-    <table id="dq2-secret-red-table">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <script src="kirakira.js"></script>
+  <script src="kira_csv_loader.js"></script>
 </body>
 </html>
