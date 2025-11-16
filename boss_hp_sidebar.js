@@ -45,6 +45,8 @@
     for (var i = 1; i < lines.length; i++) {
       var cols = lines[i].split(",");
       if (cols.length === 1 && cols[0].trim() === "") continue;
+      // 途中に再度ヘッダー行が入っている場合（例：ボス戦名,個体名,...）はスキップ
+      if (cols[0].trim() === header[0].trim()) continue;
 
       var bossName = idxBossName >= 0 ? (cols[idxBossName] || "").trim() : "";
       if (!bossName) continue;
