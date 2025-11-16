@@ -1,9 +1,9 @@
 // site_search.js
 // トップページ右側の「サイト内検索」用スクリプト
-// キーワードに応じて、関連しそうなページへのリンク一覧を表示します。
+// data-role / id のどちらでも動くようにしています。
 
 const SITE_SEARCH_PAGES = [
-  // 基本・全体
+  // 基本・全体（存在しないページは今後作成予定の想定）
   {
     title: "サイトの使い方",
     url: "howto.html",
@@ -49,7 +49,7 @@ const SITE_SEARCH_PAGES = [
     keywords: "DQ1 ドラクエ1 ボス一覧 HP 経験値 ゴールド りゅうおう 竜王 カンダタ ようじゅつし ゴーレム"
   },
   {
-    title: "DQI アイテム・呪文・モンスター データベース",
+    title: "DQI データベース（アイテム・呪文・モンスター）",
     url: "dq1_db.html",
     keywords: "DQ1 データベース アイテム 装備 どうぐ 呪文 特技 モンスター ステータス"
   },
@@ -81,7 +81,7 @@ const SITE_SEARCH_PAGES = [
     keywords: "DQ2 ドラクエ2 ボス一覧 HP 経験値 ゴールド"
   },
   {
-    title: "DQII アイテム・呪文・モンスター データベース",
+    title: "DQII データベース（アイテム・呪文・モンスター）",
     url: "dq2_db.html",
     keywords: "DQ2 データベース アイテム 装備 どうぐ 呪文 特技 モンスター ステータス"
   },
@@ -108,18 +108,24 @@ const SITE_SEARCH_PAGES = [
 ];
 
 function initSiteSearch() {
-  const input = document.getElementById("site-search-input");
-  const list = document.getElementById("site-search-results");
-  if (!input || !list) {
+  // input / results は data-role 優先、なければ id で探す
+  const input =
+    document.querySelector('[data-role="site-search-input"]') ||
+    document.getElementById("site-search-input");
+  const container =
+    document.querySelector('[data-role="site-search-results"]') ||
+    document.getElementById("site-search-results");
+
+  if (!input || !container) {
     return;
   }
 
   function renderResults() {
     const q = (input.value || "").trim().toLowerCase();
-    list.innerHTML = "";
+    container.innerHTML = "";
 
     if (q === "") {
-      // 何も入力されていないときは何も表示しない
+      // 未入力のときは何も表示しない
       return;
     }
 
@@ -128,10 +134,14 @@ function initSiteSearch() {
       return hay.indexOf(q) !== -1;
     }).slice(0, 30);
 
+    const ul = document.createElement("ul");
+    ul.className = "site-search-results-list";
+
     if (!hits.length) {
       const li = document.createElement("li");
       li.textContent = "該当するページが見つかりませんでした。";
-      list.appendChild(li);
+      ul.appendChild(li);
+      container.appendChild(ul);
       return;
     }
 
@@ -141,8 +151,10 @@ function initSiteSearch() {
       a.href = p.url;
       a.textContent = p.title;
       li.appendChild(a);
-      list.appendChild(li);
+      ul.appendChild(li);
     });
+
+    container.appendChild(ul);
   }
 
   input.addEventListener("input", renderResults);
