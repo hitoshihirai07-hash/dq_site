@@ -1,358 +1,345 @@
-
 // boss_hp_sidebar.js
-// DQ1 / DQ2 ボスCSVからHPを読み込み、トップページ右側で残りHPを計算するツール
+// ボスHP計算ツール本体（DQI / DQII 両対応）
+// - dq1_boss_multiunit.csv / dq2_boss_multiunit.csv からボス情報を読み込み
+// - メインのボスHPのみ計算対象
+// - 補助・取り巻きは一覧表示のみ（計算には含めない）
+// - ダメージ適用ごとに簡易ログを残し、「クリア」でログも消す
 
 (function () {
-  function parseCSV(text) {
-    const rows = [];
-    let row = [];
-    let current = "";
-    let inQuotes = false;
+  "use strict";
 
-    for (let i = 0; i < text.length; i++) {
-      const c = text[i];
-      if (inQuotes) {
-        if (c === '"') {
-          const next = text[i + 1];
-          if (next === '"') {
-            current += '"';
-            i++;
-          } else {
-            inQuotes = false;
-          }
-        } else {
-          current += c;
-        }
-      } else {
-        if (c === '"') {
-          inQuotes = true;
-        } else if (c === ",") {
-          row.push(current);
-          current = "";
-        } else if (c === "\n" || c === "\r") {
-          if (current.length > 0 || row.length > 0) {
-            row.push(current);
-            rows.push(row);
-            row = [];
-            current = "";
-          }
-        } else {
-          current += c;
-        }
+  function loadCsv(path) {
+    return fetch(path).then(function (res) {
+      if (!res.ok) {
+        throw new Error("CSV の読み込みに失敗しました: " + path);
       }
-    }
-
-    if (current.length > 0 || row.length > 0) {
-      row.push(current);
-      rows.push(row);
-    }
-
-    return rows;
+      return res.text();
+    });
   }
 
-  function buildBossesFromRows(rows, gameLabel) {
-    if (!rows || rows.length <= 1) return [];
+  function parseBossCsv(text, game) {
+    var lines = text
+      .replace(/\r\n/g, "\n")
+      .replace(/\r/g, "\n")
+      .split("\n")
+      .filter(function (l) { return l.trim() !== ""; });
 
-    const header = rows[0];
-    const idxBoss = header.indexOf("ボス戦名");
-    const idxUnit = header.indexOf("個体名");
-    const idxCount = header.indexOf("体数");
-    const idxHP = header.indexOf("HP");
+    if (!lines.length) {
+      return { game: game, bosses: {} };
+    }
 
-    if (idxBoss === -1 || idxHP === -1) return [];
+    var header = lines[0].split(",");
+    function idx(name) {
+      var i = header.indexOf(name);
+      return i >= 0 ? i : -1;
+    }
 
-    const map = Object.create(null);
-    const order = [];
+    var idxBossName = idx("ボス戦名");
+    var idxUnitName = idx("個体名");
+    var idxCount    = idx("体数");
+    var idxHp       = idx("HP");
+    var idxPlace    = idx("出現場所");
 
-    for (let i = 1; i < rows.length; i++) {
-      const cols = rows[i];
-      if (!cols || !cols.length) continue;
+    var bosses = {};
 
-      const bossName = (cols[idxBoss] || "").trim();
+    for (var i = 1; i < lines.length; i++) {
+      var cols = lines[i].split(",");
+      if (cols.length === 1 && cols[0].trim() === "") continue;
+
+      var bossName = idxBossName >= 0 ? (cols[idxBossName] || "").trim() : "";
       if (!bossName) continue;
 
-      const unitName = idxUnit >= 0 ? (cols[idxUnit] || "").trim() : "";
-      const countText = idxCount >= 0 ? (cols[idxCount] || "").trim() : "";
-      const hpText = (cols[idxHP] || "").trim();
+      var unitName = idxUnitName >= 0 ? (cols[idxUnitName] || "").trim() : bossName;
+      var count    = idxCount    >= 0 ? (cols[idxCount]    || "").trim() : "";
+      var hpStr    = idxHp       >= 0 ? (cols[idxHp]       || "").trim() : "";
+      var place    = idxPlace    >= 0 ? (cols[idxPlace]    || "").trim() : "";
 
-      let bucket = map[bossName];
-      if (!bucket) {
-        bucket = { name: bossName, rows: [] };
-        map[bossName] = bucket;
-        order.push(bossName);
+      var hp = parseInt(hpStr, 10);
+      if (isNaN(hp)) hp = 0;
+
+      if (!bosses[bossName]) {
+        bosses[bossName] = {
+          name: bossName,
+          game: game,
+          main: null,
+          helpers: []
+        };
       }
 
-      bucket.rows.push({
-        unitName,
-        countText,
-        hpText
-      });
+      var entry = {
+        bossName: bossName,
+        unitName: unitName,
+        count: count,
+        hp: hp,
+        place: place
+      };
+
+      if (!bosses[bossName].main) {
+        bosses[bossName].main = entry;
+      } else {
+        bosses[bossName].helpers.push(entry);
+      }
     }
 
-    const bosses = [];
-
-    order.forEach((bossName) => {
-      const bucket = map[bossName];
-      if (!bucket || !bucket.rows.length) return;
-
-      const units = bucket.rows;
-
-      let mainUnit = units.find((u) => u.unitName && u.unitName === bossName);
-      if (!mainUnit) {
-        mainUnit = units[0];
-      }
-
-      let hpNum = 0;
-      if (mainUnit && mainUnit.hpText) {
-        const m = mainUnit.hpText.replace(/[^0-9]/g, "");
-        if (m) {
-          const n = parseInt(m, 10);
-          if (!isNaN(n)) hpNum = n;
-        }
-      }
-
-      const helpers = [];
-      units.forEach((u) => {
-        if (u === mainUnit) return;
-        const name = u.unitName || bossName;
-        const count = u.countText ? parseInt(u.countText, 10) : null;
-        const m = u.hpText ? u.hpText.replace(/[^0-9]/g, "") : "";
-        const hpn = m ? parseInt(m, 10) : null;
-
-        helpers.push({
-          name,
-          count: isNaN(count) ? null : count,
-          hp: isNaN(hpn) ? null : hpn
-        });
-      });
-
-      if (hpNum <= 0) return;
-
-      bosses.push({
-        game: gameLabel,
-        name: bossName,
-        mainHp: hpNum,
-        helpers
-      });
-    });
-
-    return bosses;
+    return { game: game, bosses: bosses };
   }
 
-  function setupSidebarTool(root) {
-    const dq1Csv = root.getAttribute("data-dq1-csv");
-    const dq2Csv = root.getAttribute("data-dq2-csv");
-    if (!dq1Csv && !dq2Csv) return;
+  function initBossHpTool(root) {
+    var dq1Path = root.getAttribute("data-dq1-csv");
+    var dq2Path = root.getAttribute("data-dq2-csv");
 
-    const gameSelect = root.querySelector("[data-role='game-select']");
-    const bossSelect = root.querySelector("[data-role='boss-select']");
-    const maxHpSpan = root.querySelector("[data-role='max-hp']");
-    const currentHpSpan = root.querySelector("[data-role='current-hp']");
-    const percentSpan = root.querySelector("[data-role='percent']");
-    const damageInput = root.querySelector("[data-role='damage-input']");
-    const applyBtn = root.querySelector("[data-role='apply']");
-    const clearBtn = root.querySelector("[data-role='clear']");
-    const alertBox = root.querySelector("[data-role='alert']");
-    const helpersBox = root.querySelector("[data-role='helpers']");
-    const helpersList = root.querySelector("[data-role='helpers-list']");
+    var gameSelect   = root.querySelector('[data-role="game-select"]');
+    var bossSelect   = root.querySelector('[data-role="boss-select"]');
+    var maxHpEl      = root.querySelector('[data-role="max-hp"]');
+    var currentHpEl  = root.querySelector('[data-role="current-hp"]');
+    var percentEl    = root.querySelector('[data-role="percent"]');
+    var damageInput  = root.querySelector('[data-role="damage-input"]');
+    var applyBtn     = root.querySelector('[data-role="apply"]');
+    var clearBtn     = root.querySelector('[data-role="clear"]');
+    var alertEl      = root.querySelector('[data-role="alert"]');
+    var helpersBox   = root.querySelector('[data-role="helpers"]');
+    var helpersList  = root.querySelector('[data-role="helpers-list"]');
+    var logBox       = root.querySelector('[data-role="hp-log"]');
+    var logList      = root.querySelector('[data-role="hp-log-list"]');
 
-    if (!gameSelect || !bossSelect || !maxHpSpan || !currentHpSpan || !percentSpan ||
-        !damageInput || !applyBtn || !clearBtn) {
+    if (!gameSelect || !bossSelect || !maxHpEl || !currentHpEl || !percentEl || !damageInput || !applyBtn || !clearBtn) {
       return;
     }
 
-    const bossesByGame = {
-      DQ1: [],
-      DQ2: []
+    var dataByGame = {
+      DQ1: {},
+      DQ2: {}
     };
 
-    let currentBoss = null;
-    let currentHp = 0;
-    let maxHp = 0;
-    let halfAlertShown = false;
+    var currentGame = "";
+    var currentBossKey = "";
+    var currentBoss = null;
+    var maxHp = 0;
+    var currentHp = 0;
+    var logCounter = 0;
 
-    function formatHp(n) {
-      if (isNaN(n)) n = 0;
-      return String(n);
+    function setAlert(msg) {
+      if (!alertEl) return;
+      alertEl.textContent = msg || "";
+    }
+
+    function formatPercent(hp, maxHp) {
+      if (!maxHp || maxHp <= 0) return "-";
+      var p = (hp / maxHp) * 100;
+      return p.toFixed(1) + "%";
     }
 
     function updateDisplay() {
-      if (!currentBoss) {
-        maxHpSpan.textContent = "-";
-        currentHpSpan.textContent = "-";
-        percentSpan.textContent = "-";
-        if (alertBox) alertBox.textContent = "";
-        if (helpersBox) helpersBox.style.display = "none";
-        return;
-      }
-
-      maxHpSpan.textContent = formatHp(maxHp);
-      currentHpSpan.textContent = formatHp(currentHp);
-
-      if (maxHp > 0) {
-        let pct = Math.round((currentHp / maxHp) * 100);
-        if (pct < 0) pct = 0;
-        if (pct > 100) pct = 100;
-        percentSpan.textContent = pct + "%";
-      } else {
-        percentSpan.textContent = "-";
-      }
+      maxHpEl.textContent = maxHp > 0 ? String(maxHp) : "-";
+      currentHpEl.textContent = currentHp > 0 ? String(currentHp) : (maxHp > 0 ? "0" : "-");
+      percentEl.textContent = maxHp > 0 ? formatPercent(currentHp, maxHp) : "-";
     }
 
-    function renderHelpers() {
+    function clearHelpers() {
       if (!helpersBox || !helpersList) return;
       helpersList.innerHTML = "";
-      if (!currentBoss || !currentBoss.helpers || !currentBoss.helpers.length) {
-        helpersBox.style.display = "none";
+      helpersBox.style.display = "none";
+    }
+
+    function renderHelpers(boss) {
+      clearHelpers();
+      if (!boss || !helpersBox || !helpersList) return;
+      if (!boss.helpers || !boss.helpers.length) return;
+
+      boss.helpers.forEach(function (h) {
+        var li = document.createElement("li");
+        var parts = [];
+        if (h.unitName) parts.push(h.unitName);
+        if (h.count) parts.push(h.count + "体");
+        if (h.hp) parts.push("HP " + h.hp);
+        helpersList.appendChild(li);
+        li.textContent = parts.join(" / ");
+      });
+      helpersBox.style.display = "";
+    }
+
+    function clearLog() {
+      if (!logList) return;
+      logList.innerHTML = "";
+      logCounter = 0;
+    }
+
+    function appendLog(damage) {
+      if (!logList || !currentBoss) return;
+      logCounter += 1;
+
+      var li = document.createElement("li");
+      var bossLabel = currentBoss.name || currentBoss.main && currentBoss.main.bossName || "";
+      var beforeHp = currentHp + damage;
+      if (beforeHp > maxHp) beforeHp = maxHp;
+
+      var line = "#" + logCounter + " ";
+      if (bossLabel) {
+        line += bossLabel + "：";
+      }
+      line += String(damage) + "ダメージ → ";
+      line += "HP " + currentHp + " / " + maxHp;
+      line += "（" + formatPercent(currentHp, maxHp) + "）";
+
+      li.textContent = line;
+      logList.appendChild(li);
+
+      if (logBox) {
+        logBox.style.display = "";
+      }
+    }
+
+    function resetStateForBoss(boss) {
+      currentBoss = boss || null;
+      if (!boss || !boss.main) {
+        maxHp = 0;
+        currentHp = 0;
+        updateDisplay();
+        clearHelpers();
+        clearLog();
         return;
       }
-      helpersBox.style.display = "block";
-      currentBoss.helpers.forEach((h) => {
-        const li = document.createElement("li");
-        let text = h.name;
-        if (h.count != null && !isNaN(h.count)) {
-          text += " / " + h.count + "体";
-        }
-        if (h.hp != null && !isNaN(h.hp)) {
-          text += " / HP " + h.hp;
-        }
-        li.textContent = text;
-        helpersList.appendChild(li);
-      });
-    }
-
-    function resetBossSelection() {
-      currentBoss = null;
-      currentHp = 0;
-      maxHp = 0;
-      halfAlertShown = false;
-      if (alertBox) alertBox.textContent = "";
-      damageInput.value = "";
-      bossSelect.value = "";
+      maxHp = boss.main.hp || 0;
+      currentHp = maxHp;
       updateDisplay();
-      renderHelpers();
+      renderHelpers(boss);
+      clearLog();
     }
 
-    function onGameChange() {
-      const game = gameSelect.value;
-      resetBossSelection();
-
+    function fillBossOptions(gameKey) {
       bossSelect.innerHTML = "";
-      const placeholder = document.createElement("option");
-      placeholder.value = "";
-      placeholder.textContent = "-- ボスを選択 --";
-      bossSelect.appendChild(placeholder);
+      var opt0 = document.createElement("option");
+      opt0.value = "";
+      opt0.textContent = "-- ボスを選択 --";
+      bossSelect.appendChild(opt0);
 
-      if (!game || !bossesByGame[game] || !bossesByGame[game].length) {
+      var bosses = dataByGame[gameKey] || {};
+      Object.keys(bosses).sort().forEach(function (name) {
+        var opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        bossSelect.appendChild(opt);
+      });
+
+      bossSelect.disabled = Object.keys(bosses).length === 0;
+    }
+
+    // CSV 読み込み
+    var promises = [];
+
+    if (dq1Path) {
+      promises.push(
+        loadCsv(dq1Path).then(function (txt) {
+          var parsed = parseBossCsv(txt, "DQ1");
+          dataByGame.DQ1 = parsed.bosses;
+        }).catch(function (e) {
+          console.error(e);
+        })
+      );
+    }
+
+    if (dq2Path) {
+      promises.push(
+        loadCsv(dq2Path).then(function (txt) {
+          var parsed = parseBossCsv(txt, "DQ2");
+          dataByGame.DQ2 = parsed.bosses;
+        }).catch(function (e) {
+          console.error(e);
+        })
+      );
+    }
+
+    Promise.all(promises).then(function () {
+      // 読み込み完了後の初期化
+      updateDisplay();
+      clearHelpers();
+      clearLog();
+    });
+
+    gameSelect.addEventListener("change", function () {
+      var val = gameSelect.value || "";
+      currentGame = val;
+      currentBossKey = "";
+      resetStateForBoss(null);
+      setAlert("");
+
+      if (!val) {
+        bossSelect.innerHTML = "";
+        var opt0 = document.createElement("option");
+        opt0.value = "";
+        opt0.textContent = "-- ボスを選択 --";
+        bossSelect.appendChild(opt0);
         bossSelect.disabled = true;
         return;
       }
 
-      bossesByGame[game].forEach((b, index) => {
-        const opt = document.createElement("option");
-        opt.value = String(index);
-        opt.textContent = b.name;
-        bossSelect.appendChild(opt);
-      });
-
-      bossSelect.disabled = false;
-    }
-
-    function onBossChange() {
-      const game = gameSelect.value;
-      if (!game || !bossesByGame[game] || !bossesByGame[game].length) {
-        resetBossSelection();
-        return;
-      }
-      const idx = parseInt(bossSelect.value, 10);
-      if (isNaN(idx) || idx < 0 || idx >= bossesByGame[game].length) {
-        resetBossSelection();
-        return;
-      }
-      const b = bossesByGame[game][idx];
-      currentBoss = b;
-      maxHp = Number(b.mainHp) || 0;
-      currentHp = maxHp;
-      halfAlertShown = false;
-      if (alertBox) alertBox.textContent = "";
-      damageInput.value = "";
-      renderHelpers();
-      updateDisplay();
-    }
-
-    gameSelect.addEventListener("change", onGameChange);
-    bossSelect.addEventListener("change", onBossChange);
-
-    applyBtn.addEventListener("click", () => {
-      if (!currentBoss || !(maxHp > 0)) return;
-      const dmg = Number(damageInput.value);
-      if (!(dmg > 0)) return;
-
-      const prevHp = currentHp;
-      currentHp = Math.max(0, currentHp - dmg);
-      updateDisplay();
-
-      if (!halfAlertShown && maxHp > 0 && prevHp > maxHp / 2 && currentHp <= maxHp / 2) {
-        if (alertBox) {
-          alertBox.textContent = "HPが半分を下回りました。行動変化に注意。";
-        }
-        halfAlertShown = true;
-      }
+      fillBossOptions(val);
     });
 
-    clearBtn.addEventListener("click", () => {
-      if (!currentBoss) return;
-      currentHp = maxHp;
-      halfAlertShown = false;
-      if (alertBox) alertBox.textContent = "";
-      damageInput.value = "";
-      updateDisplay();
+    bossSelect.addEventListener("change", function () {
+      var key = bossSelect.value || "";
+      currentBossKey = key;
+      setAlert("");
+
+      if (!currentGame || !key) {
+        resetStateForBoss(null);
+        return;
+      }
+      var bosses = dataByGame[currentGame] || {};
+      var boss = bosses[key];
+      resetStateForBoss(boss);
     });
 
-    // CSV 読み込み
-    const promises = [];
+    applyBtn.addEventListener("click", function () {
+      if (!currentBoss) {
+        setAlert("先にボスを選択してください。");
+        return;
+      }
+      var v = parseInt(damageInput.value, 10);
+      if (isNaN(v) || v < 0) {
+        setAlert("ダメージを正しく入力してください。");
+        return;
+      }
+      setAlert("");
 
-    if (dq1Csv) {
-      promises.push(
-        fetch(dq1Csv)
-          .then((res) => res.ok ? res.text() : Promise.reject(new Error("DQ1 CSV load failed")))
-          .then((text) => {
-            const rows = parseCSV(text);
-            bossesByGame.DQ1 = buildBossesFromRows(rows, "DQ1");
-          })
-          .catch((err) => {
-            console.error(err);
-            bossesByGame.DQ1 = [];
-          })
-      );
-    }
+      var before = currentHp;
+      currentHp -= v;
+      if (currentHp < 0) currentHp = 0;
+      updateDisplay();
+      appendLog(v);
 
-    if (dq2Csv) {
-      promises.push(
-        fetch(dq2Csv)
-          .then((res) => res.ok ? res.text() : Promise.reject(new Error("DQ2 CSV load failed")))
-          .then((text) => {
-            const rows = parseCSV(text);
-            bossesByGame.DQ2 = buildBossesFromRows(rows, "DQ2");
-          })
-          .catch((err) => {
-            console.error(err);
-            bossesByGame.DQ2 = [];
-          })
-      );
-    }
+      damageInput.value = "";
+      damageInput.focus();
+    });
 
-    Promise.all(promises).then(() => {
-      // 初期状態ではゲーム未選択
-      resetBossSelection();
-      bossSelect.disabled = true;
+    clearBtn.addEventListener("click", function () {
+      setAlert("");
+      if (!currentBoss || !currentBoss.main) {
+        currentHp = 0;
+        maxHp = 0;
+        updateDisplay();
+        clearHelpers();
+        clearLog();
+        return;
+      }
+      currentHp = currentBoss.main.hp || 0;
+      maxHp = currentBoss.main.hp || 0;
+      updateDisplay();
+      clearLog();
+    });
+
+    damageInput.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter") {
+        ev.preventDefault();
+        applyBtn.click();
+      }
     });
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const tool = document.querySelector(".boss-hp-tool");
-    if (tool) {
-      setupSidebarTool(tool);
+  document.addEventListener("DOMContentLoaded", function () {
+    var tools = document.querySelectorAll(".boss-hp-tool");
+    for (var i = 0; i < tools.length; i++) {
+      initBossHpTool(tools[i]);
     }
   });
 })();
