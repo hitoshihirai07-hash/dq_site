@@ -135,12 +135,12 @@ const ITEM_SOURCES = [
   },
   {
     label: "DQI メダル入手場所",
-    csvPath: "medal - dq1_medal.csv",
+    csvPath: "dq1_medal.csv",
     url: "dq1_medal.html"
   },
   {
     label: "DQI メダル景品",
-    csvPath: "medal - dq1_prize.csv",
+    csvPath: "dq1_prize.csv",
     url: "dq1_medal.html"
   },
   {
