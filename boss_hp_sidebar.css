@@ -1,20 +1,30 @@
 
-/* 右側ボスHP計算用ツール（ブロック表示） */
+/* 右側ボスHP計算用サイドバー・ツール */
 
-/* 全体を1カラムのブロックとして縦に並べる */
 .index-main {
-  display: block;
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
 }
 
-/* 既存コンテンツ */
+/* 左カラム（既存コンテンツ） */
 .index-main-left {
-  max-width: 960px;
+  flex: 1 1 auto;
 }
 
-/* ツール類（ボスHP計算・検索）はメインコンテンツの下に続けて表示 */
+/* 右カラム（ツール） */
 .index-main-right {
-  max-width: 960px;
-  margin-top: 16px;
+  flex: 0 0 320px;
+}
+
+/* スマホなど幅が狭いときは縦並びにする */
+@media (max-width: 900px) {
+  .index-main {
+    flex-direction: column;
+  }
+  .index-main-right {
+    flex-basis: auto;
+  }
 }
 
 /* ツール本体 */
