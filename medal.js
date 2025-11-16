@@ -89,7 +89,7 @@ function setupCsvTable(config) {
 document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("dq1-medal-locations-table")) {
     setupCsvTable({
-      csvPath: "medal - dq1_medal.csv",
+      csvPath: "dq1_medal.csv",
       tableId: "dq1-medal-locations-table",
       searchInputId: "dq1-medal-locations-search"
     });
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (document.getElementById("dq1-medal-prizes-table")) {
     setupCsvTable({
-      csvPath: "medal - dq1_prize.csv",
+      csvPath: "dq1_prize.csv",
       tableId: "dq1-medal-prizes-table",
       searchInputId: "dq1-medal-prizes-search"
     });
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (document.getElementById("dq2-medal-locations-table")) {
     setupCsvTable({
-      csvPath: "medal - dq2_medal.csv",
+      csvPath: "dq2_medal.csv",
       tableId: "dq2-medal-locations-table",
       searchInputId: "dq2-medal-locations-search"
     });
@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (document.getElementById("dq2-medal-prizes-table")) {
     setupCsvTable({
-      csvPath: "medal - dq2_prize.csv",
+      csvPath: "dq2_prize.csv",
       tableId: "dq2-medal-prizes-table",
       searchInputId: "dq2-medal-prizes-search"
     });
