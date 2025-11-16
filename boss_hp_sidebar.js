@@ -57,7 +57,8 @@
       var place    = idxPlace    >= 0 ? (cols[idxPlace]    || "").trim() : "";
 
       var hp = parseInt(hpStr, 10);
-      if (isNaN(hp)) hp = 0;
+      // HP が数値でない、または 0 以下の行はボス候補から除外
+      if (isNaN(hp) || hp <= 0) continue;
 
       if (!bosses[bossName]) {
         bosses[bossName] = {
