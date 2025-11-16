@@ -7,11 +7,11 @@
 
   <!-- 共通テーマ -->
   <link rel="stylesheet" href="theme.css">
-  <link rel="stylesheet" href="boss_hp.css">
+  <link rel="stylesheet" href="boss_hp_sidebar.css">
 </head>
 <body>
-  <main class="two-column-layout">
-    <div class="layout-main">
+  <main class="index-main">
+    <div class="index-main-left">
     <h1>DQI・II HD-2D 情報メモ（仮）</h1>
     <h2>基本</h2>
     <ul>
@@ -57,13 +57,23 @@
     </footer>
   
     </div>
-    <aside class="layout-side">
-      <div class="boss-hp-tool">
+
+    <aside class="index-main-right">
+      <section class="boss-hp-tool" data-dq1-csv="dq1_boss_multiunit.csv" data-dq2-csv="dq2_boss_multiunit.csv">
         <h2>ボスHP計算</h2>
 
         <div class="field">
-          <label for="global-boss-select">ボスを選択：</label>
-          <select id="global-boss-select" data-role="boss-select">
+          <label for="hp-game-select">作品：</label>
+          <select id="hp-game-select" data-role="game-select">
+            <option value="">-- 作品を選択 --</option>
+            <option value="DQ1">DQ1</option>
+            <option value="DQ2">DQ2</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="hp-boss-select">ボス：</label>
+          <select id="hp-boss-select" data-role="boss-select" disabled>
             <option value="">-- ボスを選択 --</option>
           </select>
         </div>
@@ -74,8 +84,8 @@
         </div>
 
         <div class="field">
-          <label for="global-damage-input">ダメージ：</label>
-          <input id="global-damage-input" type="number" min="0" step="1" data-role="damage-input">
+          <label for="hp-damage-input">ダメージ：</label>
+          <input id="hp-damage-input" type="number" min="0" step="1" data-role="damage-input">
         </div>
 
         <div class="buttons">
@@ -86,14 +96,14 @@
         <div class="alert" data-role="alert"></div>
 
         <div class="helpers" data-role="helpers" style="display:none;">
-          <div class="helpers-title">補助・取り巻き</div>
+          <div class="helpers-title">補助・取り巻き（計算には含まれません）</div>
           <ul class="helpers-list" data-role="helpers-list"></ul>
         </div>
-      </div>
+      </section>
     </aside>
 
   </main>
-  <script src="boss_hp_global.js"></script>
+  <script src="boss_hp_sidebar.js"></script>
 </body>
 </html>
 
