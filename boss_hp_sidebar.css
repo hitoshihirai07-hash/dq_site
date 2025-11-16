@@ -171,3 +171,52 @@
   font-size: 0.8rem;
   color: #555;
 }
+
+
+/* トップページ左カラム内の2カラム構成（メタ情報 + ゲーム別ブロック） */
+.index-main-left-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.index-left-meta {
+  flex: 0 0 260px;
+}
+
+.index-left-games {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.index-game-block {
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #d0c6a8;
+  background: #fdfaf2;
+  font-size: 0.9rem;
+}
+
+.index-game-block h2 {
+  font-size: 1.0rem;
+  margin: 0 0 6px;
+}
+
+.index-game-block ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+@media (max-width: 900px) {
+  .index-main-left-inner {
+    flex-direction: column;
+  }
+  .index-left-meta {
+    flex-basis: auto;
+  }
+  .index-left-games {
+    grid-template-columns: 1fr;
+  }
+}
