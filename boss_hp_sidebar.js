@@ -57,7 +57,7 @@
       var place    = idxPlace    >= 0 ? (cols[idxPlace]    || "").trim() : "";
 
       var hp = parseInt(hpStr, 10);
-      // HP が数値でない、または 0 以下の行はボス候補から除外
+      // HP が不明または 0 以下の行はボス候補から除外
       if (isNaN(hp) || hp <= 0) continue;
 
       if (!bosses[bossName]) {
@@ -217,7 +217,8 @@
       bossSelect.appendChild(opt0);
 
       var bosses = dataByGame[gameKey] || {};
-      Object.keys(bosses).sort().forEach(function (name) {
+      // CSV 上の並び順（実際に戦う順）をそのまま使うため、並べ替えは行わない
+      Object.keys(bosses).forEach(function (name) {
         var opt = document.createElement("option");
         opt.value = name;
         opt.textContent = name;
