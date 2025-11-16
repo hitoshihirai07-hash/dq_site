@@ -11,7 +11,13 @@
   <p><a href="index.html">&larr; トップページに戻る</a></p>
   <p>ドラゴンクエストIIのフィールドや海辺・深海などにあるキラキラから入手できるアイテムの一覧です。番号や場所を見ながら中身を確認できます。</p>
 
-  <table data-csv="dq2_kirakira.csv"></table>
+    <div class="kira-search">
+    <label>キーワード検索：
+      <input type="search" id="dq2-kirakira-search" data-filter-table="dq2-kirakira-table" placeholder="地名・アイテム名など">
+    </label>
+  </div>
+
+  <table id="dq2-kirakira-table" data-csv="dq2_kirakira.csv"></table>
 
   <script src="kira_csv_loader.js"></script>
 </body>

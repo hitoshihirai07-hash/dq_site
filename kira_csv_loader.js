@@ -64,4 +64,31 @@ function initKiraTables() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", initKiraTables);
+function setupKiraSearch() {
+  const inputs = document.querySelectorAll('input[data-filter-table]');
+  inputs.forEach(function (input) {
+    input.addEventListener('input', function () {
+      const tableId = input.getAttribute('data-filter-table');
+      const table = document.getElementById(tableId);
+      if (!table) return;
+      const tbody = table.querySelector('tbody');
+      if (!tbody) return;
+      const rows = tbody.querySelectorAll('tr');
+      const q = input.value.trim().toLowerCase();
+      rows.forEach(function (row) {
+        const text = row.textContent.toLowerCase();
+        if (!q || text.indexOf(q) !== -1) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  initKiraTables();
+  setupKiraSearch();
+});
+
