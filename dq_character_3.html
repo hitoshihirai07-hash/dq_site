@@ -1,77 +1,300 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
   <title>DQ2サマルトリア王子 | ドラゴンクエストI・II HD-2D 非公式メモ</title>
-  <link rel="stylesheet" href="theme.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    .character-block {
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      padding: 0.75rem 1rem;
-      margin: 1.5rem 0;
-    }
-    .character-block h1 {
-      margin-top: 0;
-    }
-    table.data-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 0.5rem;
-    }
-    table.data-table th,
-    table.data-table td {
-      border: 1px solid #ccc;
-      padding: 0.25rem 0.5rem;
-    }
-    table.data-table th {
-      background: #f5f5f5;
-      text-align: left;
-    }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.6;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+  background-color: #f7f2e9; /* トップページと同系統の薄いオレンジ系 */
+  color: #333;
+}
+a {
+  color: #1f5faa;
+}
+header h1, h1 {
+  font-size: 1.6rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid #d4b27c;
+  padding-bottom: 0.25rem;
+}
+h2 {
+  font-size: 1.2rem;
+  margin-top: 1.6rem;
+  margin-bottom: 0.4rem;
+  border-left: 4px solid #d4b27c;
+  padding-left: 0.5rem;
+}
+nav {
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+nav a {
+  margin-right: 8px;
+}
+p.note, .legend {
+  font-size: 0.85rem;
+  color: #555;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+th, td {
+  border: 1px solid #ccc;
+  padding: 4px 6px;
+  text-align: left;
+  white-space: nowrap;
+}
+th {
+  background-color: #f2e7d7;
+}
+tbody tr:nth-child(odd) {
+  background-color: #fbf7f0;
+}
+tbody tr:nth-child(even) {
+  background-color: #fdfaf5;
+}
+.status-empty {
+  text-align: center;
+  padding: 8px 0;
+  color: #777;
+}
+@media (max-width: 768px) {
+  body {
+    padding: 12px;
+  }
+  header h1, h1 {
+    font-size: 1.3rem;
+  }
+}
+
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <main class="page-main">
-    <p><a href="index.html">&larr; トップページに戻る</a></p>
+  <nav>
+    <a href="./index.html">← トップページに戻る</a>
+    <a href="./dq_character.html">← キャラクター情報に戻る</a>
+  </nav>
 
-    <section class="character-block">
-      <h1>DQ2サマルトリア王子</h1>
-      <table class="data-table">
+  <header>
+    <h1>DQ2サマルトリア王子</h1>
+  </header>
+
+  <main>
+    <section id="initial-stats-section">
+      <h2>初期ステータス（HD-2D版）</h2>
+      <p class="note">
+        ゲーム内の検証結果をもとにした初期レベルと能力値の一覧です。<br>
+        HP・MPは表には含めていませんが、目安として「HPはたいりょくの2倍」「MPはかしこさの2倍」と考えてください。
+      </p>
+      <table id="initial-stats-table">
         <thead>
-          <tr><th>Lv</th><th>呪文</th><th>特技</th></tr>
+          <tr>
+            <th>キャラ名</th>
+            <th>初期Lv</th>
+            <th>ちから</th>
+            <th>みのまもり</th>
+            <th>すばやさ</th>
+            <th>たいりょく</th>
+            <th>かしこさ</th>
+            <th>うんのよさ</th>
+          </tr>
         </thead>
         <tbody>
-              <tr><td>4</td><td>ギラ、ホイミ、ニフラム</td><td>かえん斬り、うけながし</td></tr>
-              <tr><td>6</td><td>キアリー</td><td></td></tr>
-              <tr><td>7</td><td>スカラ</td><td></td></tr>
-              <tr><td>8</td><td>マホトーン</td><td>みかわしきゃく</td></tr>
-              <tr><td>9</td><td>リレミト</td><td></td></tr>
-              <tr><td>11</td><td>デイン</td><td></td></tr>
-              <tr><td>12</td><td></td><td>くちぶえ</td></tr>
-              <tr><td>13</td><td></td><td>まわしげり</td></tr>
-              <tr><td>15</td><td>ベホイミ</td><td></td></tr>
-              <tr><td>16</td><td>ベギラマ</td><td></td></tr>
-              <tr><td>17</td><td>ルーラ</td><td>ミラクルソード</td></tr>
-              <tr><td>18</td><td>スクルト</td><td></td></tr>
-              <tr><td>19</td><td>トラマナ</td><td>いなずま斬り</td></tr>
-              <tr><td>20</td><td>ザキ</td><td></td></tr>
-              <tr><td>23</td><td></td><td>しんくう斬り</td></tr>
-              <tr><td>24</td><td>ライデイン</td><td></td></tr>
-              <tr><td>25</td><td>ザオラル</td><td></td></tr>
-              <tr><td>26</td><td>ザラキ</td><td></td></tr>
-              <tr><td>27</td><td></td><td>はやぶさ斬り</td></tr>
-              <tr><td>28</td><td>ベホマ</td><td></td></tr>
-              <tr><td>31</td><td>ベギラゴン</td><td></td></tr>
-              <tr><td>37</td><td>ギガデイン、ザオリク</td><td></td></tr>
-              <tr><td>38</td><td>メガンテ</td><td></td></tr>
-              <tr><td>40</td><td>ベホマズン</td><td></td></tr>
-              <tr><td>42</td><td>ギガスラッシュ</td><td></td></tr>
+          <tr><td colspan="8" class="status-empty">読み込み中...</td></tr>
         </tbody>
       </table>
     </section>
- <p><a href="dq_character.html">&larr; キャラクター情報に戻る</a></p>
-    <p><a href="index.html">&larr; トップページに戻る</a></p>
+
+    <section id="exp-table-section">
+      <h2>レベル別経験値</h2>
+      <p class="note">
+      </p>
+      <table id="exp-table">
+        <thead>
+          <tr>
+            <th>Lv</th>
+            <th>累計</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="2" class="status-empty">読み込み中...</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="skills-section">
+      <h2>習得呪文・特技</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Lv</th>
+            <th>内容</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>4</td><td>ギラ、ホイミ、ニフラム／かえん斬り、うけながし</td></tr>
+          <tr><td>6</td><td>キアリー</td></tr>
+          <tr><td>7</td><td>スカラ</td></tr>
+          <tr><td>8</td><td>マホトーン／みかわしきゃく</td></tr>
+          <tr><td>9</td><td>リレミト</td></tr>
+          <tr><td>11</td><td>デイン</td></tr>
+          <tr><td>12</td><td>くちぶえ</td></tr>
+          <tr><td>13</td><td>まわしげり</td></tr>
+          <tr><td>15</td><td>ベホイミ</td></tr>
+          <tr><td>16</td><td>ベギラマ</td></tr>
+          <tr><td>17</td><td>ルーラ／ミラクルソード</td></tr>
+          <tr><td>18</td><td>スクルト</td></tr>
+          <tr><td>19</td><td>トラマナ／いなずま斬り</td></tr>
+          <tr><td>20</td><td>ザキ</td></tr>
+          <tr><td>23</td><td>しんくう斬り</td></tr>
+          <tr><td>24</td><td>ライデイン</td></tr>
+          <tr><td>25</td><td>ザオラル</td></tr>
+          <tr><td>26</td><td>ザラキ</td></tr>
+          <tr><td>27</td><td>はやぶさ斬り</td></tr>
+          <tr><td>28</td><td>ベホマ</td></tr>
+          <tr><td>31</td><td>ベギラゴン</td></tr>
+          <tr><td>37</td><td>ギガデイン、ザオリク</td></tr>
+          <tr><td>38</td><td>メガンテ</td></tr>
+          <tr><td>40</td><td>ベホマズン</td></tr>
+          <tr><td>42</td><td>ギガスラッシュ</td></tr>
+        </tbody>
+      </table>
+    </section>
   </main>
+
+  <script>
+    const CHARACTER_CONFIG = {
+      initialName: "DQ2サマルトリア王子",
+      expTotalColumn: "DQ2サマルトリア王子"
+    };
+
+    async function loadCsv(path) {
+      const res = await fetch(path);
+      if (!res.ok) throw new Error("読み込み失敗: " + path);
+      const text = await res.text();
+      const parsed = Papa.parse(text, {
+        header: true,
+        skipEmptyLines: true,
+      });
+      return parsed.data;
+    }
+
+    function isEmptyValue(v) {
+      if (v === null || v === undefined) return true;
+      const s = String(v).trim();
+      if (s === "" || s.toLowerCase() === "nan") return true;
+      return false;
+    }
+
+    function fillInitialStats(rows) {
+      const tbody = document.querySelector("#initial-stats-table tbody");
+      tbody.innerHTML = "";
+      const row = rows.find(r => (r["キャラ名"] || "").trim() === CHARACTER_CONFIG.initialName);
+      if (!row) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 8;
+        td.className = "status-empty";
+        td.textContent = "該当キャラクターのデータが見つかりませんでした。";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+      const tr = document.createElement("tr");
+      function cell(key) {
+        const td = document.createElement("td");
+        td.textContent = row[key] ?? "";
+        return td;
+      }
+      tr.appendChild(cell("キャラ名"));
+      tr.appendChild(cell("初期レベル"));
+      tr.appendChild(cell("ちから"));
+      tr.appendChild(cell("みのまもり"));
+      tr.appendChild(cell("すばやさ"));
+      tr.appendChild(cell("たいりょく"));
+      tr.appendChild(cell("かしこさ"));
+      tr.appendChild(cell("うんのよさ"));
+      tbody.appendChild(tr);
+    }
+
+    function fillExpTable(rows) {
+      const tbody = document.querySelector("#exp-table tbody");
+      tbody.innerHTML = "";
+
+      // 加入レベル（最初に累計が入る行）を特定
+      let joinLevel = null;
+      rows.forEach(r => {
+        const total = r[CHARACTER_CONFIG.expTotalColumn];
+        const level = r["レベル"];
+        if (!isEmptyValue(total) && joinLevel === null && level !== undefined && level !== "") {
+          joinLevel = level;
+        }
+      });
+
+      rows.forEach(r => {
+        const level = r["レベル"];
+        if (level === undefined || level === "") return;
+
+        // 加入前はスキップ
+        if (joinLevel !== null && Number(level) < Number(joinLevel)) return;
+
+        const total = r[CHARACTER_CONFIG.expTotalColumn];
+
+        const tr = document.createElement("tr");
+
+        const tdLv = document.createElement("td");
+        tdLv.textContent = level;
+        tr.appendChild(tdLv);
+
+        const tdTotal = document.createElement("td");
+        tdTotal.textContent = isEmptyValue(total) ? "" : total;
+        tr.appendChild(tdTotal);
+
+        tbody.appendChild(tr);
+      });
+
+      if (!tbody.hasChildNodes()) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 2;
+        td.className = "status-empty";
+        td.textContent = "経験値データが見つかりませんでした。";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+      }
+    }
+
+    (async function init() {
+      try {
+        const [initialRows, expRows] = await Promise.all([
+          loadCsv("dq_Initial%20value.csv"),
+          loadCsv("dq2_experience%20value%20table.csv"),
+        ]);
+        fillInitialStats(initialRows);
+        fillExpTable(expRows);
+      } catch (e) {
+        console.error(e);
+        const tbody1 = document.querySelector("#initial-stats-table tbody");
+        const tbody2 = document.querySelector("#exp-table tbody");
+        if (tbody1) {
+          tbody1.innerHTML = "<tr><td colspan='8' class='status-empty'>データの読み込みに失敗しました。</td></tr>";
+        }
+        if (tbody2) {
+          tbody2.innerHTML = "<tr><td colspan='2' class='status-empty'>データの読み込みに失敗しました。</td></tr>";
+        }
+      }
+    })();
+  </script>
 </body>
 </html>

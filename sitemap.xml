@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://dq-site.pages.dev/</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/sitemap.html</loc>
+  </url>
+
+  <!-- 基本ページ -->
+  <url>
+    <loc>https://dq-site.pages.dev/howto.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/policy.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/memo.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/about.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/history.html</loc>
+  </url>
+
+  <!-- DQI 関連 -->
+  <url>
+    <loc>https://dq-site.pages.dev/dq1_story.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq1_boss_list.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq1_db.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq1_kirakira.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq1_secret_place.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq1_room_items.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq1_medal.html</loc>
+  </url>
+
+  <!-- DQII 関連 -->
+  <url>
+    <loc>https://dq-site.pages.dev/dq2_story.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq2_boss_list.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq2_db.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq2_kirakira.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq2_secret_place.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq2_room_items.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq2_medal.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq2_lottery.html</loc>
+  </url>
+
+  <!-- 共通・その他 -->
+  <url>
+    <loc>https://dq-site.pages.dev/worldmap.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/boss_hp.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq_character.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq_character_2.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq_character_3.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq_character_4.html</loc>
+  </url>
+  <url>
+    <loc>https://dq-site.pages.dev/dq_character_5.html</loc>
+  </url>
+</urlset>
