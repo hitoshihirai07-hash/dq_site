@@ -38,6 +38,14 @@
       padding: 0.5rem 0;
       color: #777;
     }
+      .table-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .table-block {
+      flex: 1 1 260px;
+    }
   </style>
 </head>
 <body>
@@ -70,16 +78,29 @@
       </table>
 
       <h2>レベル別経験値</h2>
-      <table id="dq1-exp-table" class="data-table">
-        <thead>
-          <tr><th>Lv</th><th>累計</th></tr>
-        </thead>
-        <tbody>
-          <tr><td colspan="2" class="status-empty">読み込み中...</td></tr>
-        </tbody>
-      </table>
+<p class="note">
+  経験値テーブルとあわせて、各レベルごとの運基準（運基準／運下限／運上限）も掲載しています。<br>
+  ・運下限以下：0.8～0.9倍ダメージ<br>
+  ・下限超～上限未満：0.9～1.1倍ダメージ<br>
+  ・運上限以上：1.1～1.2倍ダメージ
+</p>
+<table id="dq1-exp-table" class="data-table">
+  <thead>
+    <tr>
+      <th>Lv</th>
+      <th>累計</th>
+      <th>運基準</th>
+      <th>運下限</th>
+      <th>運上限</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td colspan="5" class="status-empty">読み込み中...</td></tr>
+  </tbody>
+</table>
 
-      <h2>習得呪文・特技</h2>
+<h2>習得呪文・特技</h2>
+
       <table class="data-table">
         <thead>
           <tr><th>Lv</th><th>呪文</th><th>特技</th></tr>
@@ -111,6 +132,189 @@
     <p><a href="dq_character.html">&larr; キャラクター情報に戻る</a></p>
     <p><a href="index.html">&larr; トップページに戻る</a></p>
   </main>
-  <script src="./dq1_experience.js"></script>
+  <script>
+  (function() {
+    const EXP_CSV = "dq1_experience%20value%20table.csv";
+    const ABILITY_CSV = "dq_data_ability.csv";
+    const INITIAL_CSV = "dq_Initial%20value.csv";
+    const ABILITY_KEY = "DQ1主人公";
+
+function parseCsv(text) {
+  const NL = String.fromCharCode(10);
+  const CR = String.fromCharCode(13);
+  const rawLines = text.trim().split(NL);
+  if (rawLines.length <= 1) return [];
+  const headerLine = rawLines[0].replace(CR, "");
+  const headers = headerLine.split(",");
+  return rawLines.slice(1).map(function(line) {
+    const clean = line.replace(CR, "");
+    const cols = clean.split(",");
+    const obj = {};
+    headers.forEach(function(h, idx) {
+      obj[h] = (cols[idx] || "").trim();
+    });
+    return obj;
+  });
+};
+
+function fillInitialStats(rows) {
+  const tbody = document.querySelector("#initial-stats-table tbody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  const target = rows.find(function(r) {
+    return (r["キャラ名"] || "").trim() === ABILITY_KEY;
+  });
+
+  if (!target) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 8;
+    td.className = "status-empty";
+    td.textContent = "初期ステータスデータが見つかりませんでした。";
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+    return;
+  }
+
+  const tr = document.createElement("tr");
+  function appendCell(key, fromCsv) {
+    const td = document.createElement("td");
+    if (fromCsv) {
+      td.textContent = target[key] ?? "";
+    } else {
+      td.textContent = key;
+    }
+    tr.appendChild(td);
+  }
+
+  appendCell("DQ1主人公", false);
+  appendCell("初期レベル", true);
+  appendCell("ちから", true);
+  appendCell("みのまもり", true);
+  appendCell("すばやさ", true);
+  appendCell("たいりょく", true);
+  appendCell("かしこさ", true);
+  appendCell("うんのよさ", true);
+
+  tbody.appendChild(tr);
+}
+
+function fillTable(expRows, abilityRows) {
+  const tbody = document.querySelector("#dq1-exp-table tbody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  // 対象キャラの運基準データをレベル別にまとめる
+  const luckRows = (abilityRows || []).filter(function(r) {
+    return (r["キャラ名"] || "").trim() === ABILITY_KEY;
+  });
+  const luckByLevel = {};
+  luckRows.forEach(function(r) {
+    const lv = String(r["レベル"] || "").trim();
+    if (!lv) return;
+    luckByLevel[lv] = r;
+  });
+
+  // 経験値データをレベル別にまとめる
+  const expByLevel = {};
+  expRows.forEach(function(r) {
+    const lv = String(r["レベル"] || "").trim();
+    if (!lv) return;
+    expByLevel[lv] = r;
+  });
+
+  // 経験値・運の両方に存在するレベル + どちらか片方だけに存在するレベルをすべて対象にする
+  const levelSet = new Set();
+  expRows.forEach(function(r) {
+    const lv = String(r["レベル"] || "").trim();
+    if (!lv) return;
+    levelSet.add(lv);
+  });
+  luckRows.forEach(function(r) {
+    const lv = String(r["レベル"] || "").trim();
+    if (!lv) return;
+    levelSet.add(lv);
+  });
+
+  const sortedLevels = Array.from(levelSet).sort(function(a, b) {
+    return Number(a) - Number(b);
+  });
+
+  sortedLevels.forEach(function(level) {
+    const expRow = expByLevel[level] || {};
+    const total = expRow["DQ1主人公"];
+
+    const tr = document.createElement("tr");
+
+    // Lv
+    const tdLv = document.createElement("td");
+    tdLv.textContent = level;
+    tr.appendChild(tdLv);
+
+    // 累計
+    const tdTotal = document.createElement("td");
+    tdTotal.textContent = total || "";
+    tr.appendChild(tdTotal);
+
+    // 運系（なければ空欄）
+    const luck = luckByLevel[level] || {};
+    function appendLuck(key) {
+      const td = document.createElement("td");
+      td.textContent = luck[key] ?? "";
+      tr.appendChild(td);
+    }
+    appendLuck("運基準");
+    appendLuck("運下限");
+    appendLuck("運上限");
+
+    tbody.appendChild(tr);
+  });
+
+  if (!tbody.hasChildNodes()) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 5;
+    td.className = "status-empty";
+    td.textContent = "経験値データが見つかりませんでした。";
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  }
+}
+
+      Promise.all([
+    fetch(EXP_CSV).then(function(res) {
+      if (!res.ok) throw new Error("dq1_experience value table.csv 読み込み失敗");
+      return res.text();
+    }),
+    fetch(ABILITY_CSV).then(function(res) {
+      if (!res.ok) throw new Error("dq_data_ability.csv 読み込み失敗");
+      return res.text();
+    }),
+    fetch(INITIAL_CSV).then(function(res) {
+      if (!res.ok) throw new Error("dq_Initial value.csv 読み込み失敗");
+      return res.text();
+    })
+  ])
+  .then(function(results) {
+    const expRows = parseCsv(results[0]);
+    const abilityRows = parseCsv(results[1]);
+    const initialRows = parseCsv(results[2]);
+    fillInitialStats(initialRows);
+    fillTable(expRows, abilityRows);
+  })
+  .catch(function(e) {
+    console.error(e);
+    const expTbody = document.querySelector("#dq1-exp-table tbody");
+    if (expTbody) {
+      expTbody.innerHTML = "<tr><td colspan='5' class='status-empty'>データの読み込みに失敗しました。</td></tr>";
+    }
+    const initTbody = document.querySelector("#initial-stats-table tbody");
+    if (initTbody) {
+      initTbody.innerHTML = "<tr><td colspan='8' class='status-empty'>データの読み込みに失敗しました。</td></tr>";
+    }
+  });
+})();
+</script>
 </body>
 </html>
