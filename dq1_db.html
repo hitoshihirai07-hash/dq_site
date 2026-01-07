@@ -59,12 +59,14 @@
             <option value="">すべて</option>
             <option value="道具">道具</option>
             <option value="装備">装備（全部）</option>
+            <option value="装備武器">装備武器</option>
             <option value="装備盾">装備盾</option>
             <option value="装備兜">装備兜</option>
             <option value="装備服">装備服</option>
             <option value="装備装飾品">装備装飾品</option>
           </select>
         </label>
+        <label class="inline"><input type="checkbox" id="items-mult-only" /> 倍率ありのみ</label>
       </div>
       <div class="table-wrap">
         <table>
@@ -76,9 +78,11 @@
               <th class="nowrap">守備力</th>
               <th class="nowrap">買値</th>
               <th class="nowrap">売値</th>
+              <th class="nowrap">倍率</th>
               <th>効果</th>
               <th>入手方法</th>
               <th>備考</th>
+        
             </tr>
           </thead>
           <tbody id="items-body"></tbody>
@@ -99,6 +103,7 @@
             <option value="超絶技">超絶技</option>
           </select>
         </label>
+        <label class="inline"><input type="checkbox" id="items-mult-only" /> 倍率ありのみ</label>
       </div>
       <div class="table-wrap">
         <table>
@@ -118,13 +123,13 @@
           </thead>
           <tbody id="spells-body"></tbody>
         </table>
-</table>
+     </table>
       </div>
       <p class="muted">
         ※実際のダメージは、賢さ・敵の耐性などの影響で変動します。
       </p>
     </section>
-
+   
       </div>
     </section>
 
@@ -133,6 +138,7 @@
         <label>キーワード検索
           <input type="search" id="monsters-search" placeholder="名前・出現エリア・ドロップなど" />
         </label>
+        <label class="inline"><input type="checkbox" id="items-mult-only" /> 倍率ありのみ</label>
       </div>
       <div class="table-wrap">
         <table>
@@ -210,10 +216,12 @@
       const tbody = document.getElementById("items-body");
       const searchInput = document.getElementById("items-search");
       const kindSelect = document.getElementById("items-kind");
+      const multOnlyCheckbox = document.getElementById("items-mult-only");
 
       function applyFilter() {
         const kw = searchInput.value.trim();
         const kindFilter = kindSelect.value;
+        const multOnly = multOnlyCheckbox ? multOnlyCheckbox.checked : false;
         tbody.innerHTML = "";
 
         const rowsToShow = [];
@@ -225,6 +233,7 @@
           const def     = row[idx["守備力"]] || "";
           const buyPrice  = row[idx["買値"]] || "";
           const sellPrice = row[idx["売値"]] || "";
+          const multRaw = (idx["倍率"] !== undefined ? (row[idx["倍率"]] || "") : "");
           const effect  = row[idx["効果"]] || "";
           const acquire = row[idx["入手方法"]] || "";
           const note    = row[idx["備考"]] || "";
@@ -237,10 +246,15 @@
             }
           }
 
-          const fullText = [kind, name, atk, def, buyPrice, sellPrice, effect, acquire, note].join(" ");
+          const fullText = [kind, name, atk, def, buyPrice, sellPrice, effect, acquire, note, multRaw].join(" ");
+          if (multOnly) {
+            const mv = parseFloat(String(multRaw).trim());
+            if (!isFinite(mv) || mv <= 0) continue;
+          }
+
           if (!textMatch(fullText, kw)) continue;
 
-          rowsToShow.push({ kind, name, atk, def, buyPrice, sellPrice, effect, acquire, note });
+          rowsToShow.push({ kind, name, atk, def, buyPrice, sellPrice, multRaw, effect, acquire, note });
         }
 
         rowsToShow.sort((a, b) => {
@@ -291,6 +305,11 @@
           tdSell.textContent = item.sellPrice;
           tr.appendChild(tdSell);
 
+          const tdMult = document.createElement("td");
+          tdMult.className = "nowrap";
+          tdMult.textContent = item.multRaw;
+          tr.appendChild(tdMult);
+
           const tdEffect = document.createElement("td");
           tdEffect.innerHTML = nl2br(item.effect);
           tr.appendChild(tdEffect);
@@ -309,6 +328,7 @@
 
       searchInput.addEventListener("input", applyFilter);
       kindSelect.addEventListener("change", applyFilter);
+      if (multOnlyCheckbox) multOnlyCheckbox.addEventListener("change", applyFilter);
       applyFilter();
     }
 
