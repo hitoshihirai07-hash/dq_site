@@ -1,5 +1,6 @@
 
 User-agent: *
 Allow: /
-Sitemap: https://dq_site.pages.dev/sitemap.xml
+Sitemap: https://dq-site.pages.dev/sitemap.xml
+
 
