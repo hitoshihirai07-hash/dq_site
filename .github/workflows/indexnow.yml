@@ -1,0 +1,19 @@
+name: IndexNow
+
+on:
+  push:
+    branches: [ "main" ]
+  schedule:
+    - cron: "17 */6 * * *"  # 6時間ごと（適当に変えてOK）
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Submit URLs via IndexNow
+        uses: bojieyang/indexnow-action@v2
+        with:
+          sitemap-location: "https://dq-site.pages.dev/sitemap.xml"
+          key: ${{ secrets.INDEXNOW_KEY }}
+          lastmod-required: false
+          limit: 10000
