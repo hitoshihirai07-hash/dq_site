@@ -14,6 +14,6 @@ jobs:
         uses: bojieyang/indexnow-action@v2
         with:
           sitemap-location: "https://dq-site.pages.dev/sitemap.xml"
-          key: ${{ secrets.INDEXNOW_KEY }}
+          key: ${{ secrets.abcd-1234 }}
           lastmod-required: false
           limit: 10000
