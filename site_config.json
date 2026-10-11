@@ -1,0 +1,391 @@
+{
+  "title": "ドラクエ攻略メモ＆データベース",
+  "games": [
+    {
+      "id": "dq1",
+      "name": "DQ1",
+      "edition": "HD-2D版",
+      "home": "dq1.html",
+      "description": "アレフガルドの冒険を、攻略とデータで確認。",
+      "sections": [
+        {
+          "name": "攻略",
+          "links": [
+            {
+              "label": "ストーリー攻略",
+              "url": "dq1_story.html"
+            },
+            {
+              "label": "ボス攻略",
+              "url": "dq1_boss_list.html"
+            },
+            {
+              "label": "ボス耐性一覧",
+              "url": "dq1_boss_resistance.html"
+            }
+          ]
+        },
+        {
+          "name": "データ",
+          "links": [
+            {
+              "label": "アイテム・装備",
+              "url": "dq1_db.html#items"
+            },
+            {
+              "label": "呪文・特技",
+              "url": "dq1_db.html#spells"
+            },
+            {
+              "label": "モンスター",
+              "url": "dq1_db.html#monsters"
+            },
+            {
+              "label": "キャラクター情報",
+              "url": "dq_character_1.html"
+            }
+          ]
+        },
+        {
+          "name": "探索・収集",
+          "links": [
+            {
+              "label": "キラキラ",
+              "url": "dq1_kirakira.html"
+            },
+            {
+              "label": "ひみつの場所",
+              "url": "dq1_secret_place.html"
+            },
+            {
+              "label": "町・ダンジョンアイテム",
+              "url": "dq1_room_items.html"
+            },
+            {
+              "label": "ちいさなメダル",
+              "url": "dq1_medal.html"
+            },
+            {
+              "label": "世界地図",
+              "url": "worldmap.html"
+            }
+          ]
+        },
+        {
+          "name": "便利ツール",
+          "links": [
+            {
+              "label": "ダメージ計算機",
+              "url": "dq_damage_calc.html"
+            },
+            {
+              "label": "ボスHP計算機",
+              "url": "boss_hp.html"
+            },
+            {
+              "label": "アイテム所持金計算機",
+              "url": "dq_items_calc.html"
+            },
+            {
+              "label": "ドロップ逆引き",
+              "url": "dq_drop_search.html"
+            },
+            {
+              "label": "せいすい・トヘロス適正レベル",
+              "url": "dq_encounter_level.html"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dq2",
+      "name": "DQ2",
+      "edition": "HD-2D版",
+      "home": "dq2.html",
+      "description": "仲間との冒険を、攻略とデータで確認。",
+      "sections": [
+        {
+          "name": "攻略",
+          "links": [
+            {
+              "label": "ストーリー攻略",
+              "url": "dq2_story.html"
+            },
+            {
+              "label": "ボス攻略",
+              "url": "dq2_boss_list.html"
+            },
+            {
+              "label": "ボス耐性一覧",
+              "url": "dq2_boss_resistance.html"
+            },
+            {
+              "label": "クリア後の攻略",
+              "url": "dq2_story_after.html"
+            }
+          ]
+        },
+        {
+          "name": "データ",
+          "links": [
+            {
+              "label": "アイテム・装備",
+              "url": "dq2_db.html#items"
+            },
+            {
+              "label": "呪文・特技",
+              "url": "dq2_db.html#spells"
+            },
+            {
+              "label": "モンスター",
+              "url": "dq2_db.html#monsters"
+            },
+            {
+              "label": "キャラクター情報",
+              "url": "dq_character.html"
+            },
+            {
+              "label": "キャラクター別 呪文・特技検索",
+              "url": "dq2_spell_skill_search.html"
+            }
+          ]
+        },
+        {
+          "name": "探索・収集",
+          "links": [
+            {
+              "label": "キラキラ",
+              "url": "dq2_kirakira.html"
+            },
+            {
+              "label": "ひみつの場所",
+              "url": "dq2_secret_place.html"
+            },
+            {
+              "label": "町・ダンジョンアイテム",
+              "url": "dq2_room_items.html"
+            },
+            {
+              "label": "ちいさなメダル",
+              "url": "dq2_medal.html"
+            },
+            {
+              "label": "世界地図",
+              "url": "worldmap.html"
+            },
+            {
+              "label": "海底・深海",
+              "url": "dq2_ocean.html"
+            },
+            {
+              "label": "ふくびき景品",
+              "url": "dq2_lottery.html"
+            }
+          ]
+        },
+        {
+          "name": "便利ツール",
+          "links": [
+            {
+              "label": "ダメージ計算機",
+              "url": "dq_damage_calc.html"
+            },
+            {
+              "label": "ボスHP計算機",
+              "url": "boss_hp.html"
+            },
+            {
+              "label": "アイテム所持金計算機",
+              "url": "dq_items_calc.html"
+            },
+            {
+              "label": "ドロップ逆引き",
+              "url": "dq_drop_search.html"
+            },
+            {
+              "label": "せいすい・トヘロス適正レベル",
+              "url": "dq_encounter_level.html"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "search_sources": [
+    {
+      "csv": "data/dq1_items.csv",
+      "url": "dq1_db.html#items",
+      "game": "dq1",
+      "label": "アイテム・装備"
+    },
+    {
+      "csv": "data/dq1_spells.csv",
+      "url": "dq1_db.html#spells",
+      "game": "dq1",
+      "label": "呪文・特技"
+    },
+    {
+      "csv": "data/dq1_monsters.csv",
+      "url": "dq1_db.html#monsters",
+      "game": "dq1",
+      "label": "モンスター"
+    },
+    {
+      "csv": "dq1_kiraakira.csv",
+      "url": "dq1_kirakira.html",
+      "game": "dq1",
+      "label": "キラキラ"
+    },
+    {
+      "csv": "dq1_secret_place.csv",
+      "url": "dq1_secret_place.html",
+      "game": "dq1",
+      "label": "ひみつの場所"
+    },
+    {
+      "csv": "dq1_room_items.csv",
+      "url": "dq1_room_items.html",
+      "game": "dq1",
+      "label": "町・ダンジョンアイテム"
+    },
+    {
+      "csv": "dq1_medal.csv",
+      "url": "dq1_medal.html",
+      "game": "dq1",
+      "label": "メダル入手場所"
+    },
+    {
+      "csv": "dq1_prize.csv",
+      "url": "dq1_medal.html",
+      "game": "dq1",
+      "label": "メダル景品"
+    },
+    {
+      "csv": "dq1_boss_multiunit.csv",
+      "url": "dq1_boss_list.html",
+      "game": "dq1",
+      "label": "ボス"
+    },
+    {
+      "csv": "dq1_boss_resistance.csv",
+      "url": "dq1_boss_resistance.html",
+      "game": "dq1",
+      "label": "ボス耐性"
+    },
+    {
+      "csv": "dq1_secret_place_green.csv",
+      "url": "dq1_secret_place.html",
+      "game": "dq1",
+      "label": "ひみつの場所"
+    },
+    {
+      "csv": "dq1_secret_place_red.csv",
+      "url": "dq1_secret_place.html",
+      "game": "dq1",
+      "label": "ひみつの場所"
+    },
+    {
+      "csv": "data/dq2_items.csv",
+      "url": "dq2_db.html#items",
+      "game": "dq2",
+      "label": "アイテム・装備"
+    },
+    {
+      "csv": "data/dq2_spells.csv",
+      "url": "dq2_db.html#spells",
+      "game": "dq2",
+      "label": "呪文・特技"
+    },
+    {
+      "csv": "data/dq2_monsters.csv",
+      "url": "dq2_db.html#monsters",
+      "game": "dq2",
+      "label": "モンスター"
+    },
+    {
+      "csv": "dq2_kirakira.csv",
+      "url": "dq2_kirakira.html",
+      "game": "dq2",
+      "label": "キラキラ"
+    },
+    {
+      "csv": "dq2_secret_place.csv",
+      "url": "dq2_secret_place.html",
+      "game": "dq2",
+      "label": "ひみつの場所"
+    },
+    {
+      "csv": "dq2_room_items.csv",
+      "url": "dq2_room_items.html",
+      "game": "dq2",
+      "label": "町・ダンジョンアイテム"
+    },
+    {
+      "csv": "dq2_medal.csv",
+      "url": "dq2_medal.html",
+      "game": "dq2",
+      "label": "メダル入手場所"
+    },
+    {
+      "csv": "dq2_prize.csv",
+      "url": "dq2_medal.html",
+      "game": "dq2",
+      "label": "メダル景品"
+    },
+    {
+      "csv": "dq2_boss_multiunit.csv",
+      "url": "dq2_boss_list.html",
+      "game": "dq2",
+      "label": "ボス"
+    },
+    {
+      "csv": "dq2_boss_resistance.csv",
+      "url": "dq2_boss_resistance.html",
+      "game": "dq2",
+      "label": "ボス耐性"
+    },
+    {
+      "csv": "dq2_lottery.csv",
+      "url": "dq2_lottery.html",
+      "game": "dq2",
+      "label": "ふくびき"
+    },
+    {
+      "csv": "dq2_deep_sea_red.csv",
+      "url": "dq2_ocean.html",
+      "game": "dq2",
+      "label": "海底・深海"
+    },
+    {
+      "csv": "dq2_kirakira_blue.csv",
+      "url": "dq2_kirakira.html",
+      "game": "dq2",
+      "label": "キラキラ"
+    },
+    {
+      "csv": "dq2_kirakira_red.csv",
+      "url": "dq2_kirakira.html",
+      "game": "dq2",
+      "label": "キラキラ"
+    },
+    {
+      "csv": "dq2_ocean_floor_blue.csv",
+      "url": "dq2_ocean.html",
+      "game": "dq2",
+      "label": "海底・深海"
+    },
+    {
+      "csv": "dq2_secret_place_blue.csv",
+      "url": "dq2_secret_place.html",
+      "game": "dq2",
+      "label": "ひみつの場所"
+    },
+    {
+      "csv": "dq2_secret_place_red.csv",
+      "url": "dq2_secret_place.html",
+      "game": "dq2",
+      "label": "ひみつの場所"
+    }
+  ]
+}

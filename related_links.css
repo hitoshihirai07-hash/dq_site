@@ -1,0 +1,2 @@
+/* Legacy related-links hook. The shared menu is styled by site.css. */
+.related-links{padding:12px;border:1px solid #d9dfd5;border-radius:8px;background:#fff}.related-links ul{display:flex;flex-wrap:wrap;gap:12px;list-style:none;padding:0}.related-links h2{font-size:14px}
